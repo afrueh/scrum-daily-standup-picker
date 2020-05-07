@@ -16,6 +16,7 @@ electron_updater_1.autoUpdater.logger = log;
 // Disable auto download as ASAR is disabled and therefore code signing cannot be done
 electron_updater_1.autoUpdater.autoDownload = false;
 log.info('App starting...');
+log.info("serve: " + serve);
 // Manage unhandled exceptions as early as possible
 process.on('uncaughtException', function (e) {
     console.error("Caught unhandled exception: " + e);
@@ -38,8 +39,12 @@ function createWindow() {
     });
     if (serve) {
         require('electron-reload')(__dirname, {
-            electron: require(__dirname + "/node_modules/electron")
+            electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
+            hardResetMethod: 'exit'
         });
+        // require('electron-reload')(__dirname, {
+        //   electron: require(`${__dirname}/node_modules/electron`)
+        // });
         win.loadURL('http://localhost:4200');
     }
     else {
@@ -91,13 +96,13 @@ try {
         electron_1.dialog.showErrorBox('Error while looking for updates: ', error == null ? 'unknown' : (error.stack || error).toString());
     });
     electron_updater_1.autoUpdater.on('update-available', function () {
-        electron_1.dialog.showMessageBox({
+        electron_1.dialog.showMessageBox(win, {
             type: 'info',
             title: 'Found Updates',
             message: 'Found updates, do you want update now?',
             buttons: ['Sure', 'No']
-        }, function (buttonIndex) {
-            if (buttonIndex === 0) {
+        }).then(function (res) {
+            if (res.response === 0) {
                 electron_1.shell.openExternal(GITHUB_RELEASE_URL);
             }
         });

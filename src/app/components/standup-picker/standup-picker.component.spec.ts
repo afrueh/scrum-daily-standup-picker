@@ -32,9 +32,9 @@ describe('StandupPickerComponent', () => {
   beforeEach(() => {
     howlerMock = spyOn(Howl, 'Howl').and.returnValue({
       // @ts-ignore
-      play: () => {},
+      play: () => { },
       // @ts-ignore
-      on: () => {}
+      on: () => { }
     });
 
     settingsService = jasmine.createSpyObj('SettingsService', [
@@ -122,7 +122,7 @@ describe('StandupPickerComponent', () => {
 
   it('should correctly navigate to settings', () => {
     // @ts-ignore
-    spyOn(router, 'navigate').and.callFake(() => {});
+    spyOn(router, 'navigate').and.callFake(() => { });
     comp.goToSettings();
     expect(router.navigate).toHaveBeenCalledWith(['settings']);
   });
@@ -148,7 +148,7 @@ describe('StandupPickerComponent', () => {
 
       // Picker is selecting
       expect(comp.title).toBe('PAGES.STANDUP_PICKER.PLEASE_WAIT');
-      expect(comp.time).toBe(undefined);
+      expect(comp.time).toBeUndefined();
 
       tick(1100);
 

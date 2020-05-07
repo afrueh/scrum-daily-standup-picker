@@ -20,6 +20,7 @@ autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
 
 log.info('App starting...');
+log.info(`serve: ${serve}`)
 
 // Manage unhandled exceptions as early as possible
 process.on('uncaughtException', e => {
@@ -49,8 +50,13 @@ function createWindow() {
 
   if (serve) {
     require('electron-reload')(__dirname, {
-      electron: require(`${__dirname}/node_modules/electron`)
+      electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
+      hardResetMethod: 'exit'
     });
+
+    // require('electron-reload')(__dirname, {
+    //   electron: require(`${__dirname}/node_modules/electron`)
+    // });
     win.loadURL('http://localhost:4200');
   } else {
     win.loadURL(
@@ -61,7 +67,6 @@ function createWindow() {
       })
     );
   }
-
   // Open the DevTools.
   if (serve) {
     win.webContents.openDevTools();

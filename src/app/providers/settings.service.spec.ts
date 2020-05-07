@@ -67,7 +67,7 @@ describe('SettingsService', () => {
     'should inform about new settings',
     fakeAsync(() => {
       const expectedValues = [TEST_SETTINGS];
-      const receivedValues = [];
+      const receivedValues: any[] = [];
       sut.setting$.subscribe(
         settings => {
           receivedValues.push(settings);

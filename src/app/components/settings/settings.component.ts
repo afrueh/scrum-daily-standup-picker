@@ -87,31 +87,32 @@ export class SettingsComponent {
     return <FormArray>this.getStandupPickerFormGroup().controls.standupMusic;
   }
 
-  exportSettings(): void {
+  async exportSettings(): Promise<void> {
     const errText = this.translateService.instant(
       'PAGES.SETTINGS.FORM.FILE_UPLOAD.EXPORT_BACKUP.ERROR'
     );
 
-    this.electronService
+    await this.electronService
       .showSaveDialog(
         this.translateService.instant(
           'PAGES.SETTINGS.FORM.FILE_UPLOAD.EXPORT_BACKUP.TITLE'
         )
       )
-      .then(folderPath => {
-        this.backupService
-          .createBackup(folderPath)
-          .then(() => {
-            this.showSnackbar(
-              this.translateService.instant(
-                'PAGES.SETTINGS.FORM.FILE_UPLOAD.EXPORT_BACKUP.SUCCESS',
-                { path: folderPath }
-              )
-            );
-          })
-          .catch(err => {
-            this.showSnackbar(`${errText} ${err}`, ERROR_DURATION_IN_MS);
-          });
+      .then(async folderPath => {
+        console.log(folderPath);
+        try {
+          await this.backupService
+            .createBackup(folderPath);
+          this.showSnackbar(
+            this.translateService.instant(
+              'PAGES.SETTINGS.FORM.FILE_UPLOAD.EXPORT_BACKUP.SUCCESS',
+              { path: folderPath }
+            )
+          );
+        }
+        catch (err) {
+          this.showSnackbar(`${errText} ${err}`, ERROR_DURATION_IN_MS);
+        }
       })
       .catch(err => {
         this.showSnackbar(`${errText} ${err}`, ERROR_DURATION_IN_MS);
@@ -159,12 +160,12 @@ export class SettingsComponent {
           data: {
             title: this.translateService.instant(
               `PAGES.SETTINGS.FORM.FILE_UPLOAD.DELETE.DIALOG_${
-                type === 'image' ? 'IMAGES' : 'SOUNDS'
+              type === 'image' ? 'IMAGES' : 'SOUNDS'
               }_TITLE`
             ),
             message: this.translateService.instant(
               `PAGES.SETTINGS.FORM.FILE_UPLOAD.DELETE.DIALOG_${
-                type === 'image' ? 'IMAGES' : 'SOUNDS'
+              type === 'image' ? 'IMAGES' : 'SOUNDS'
               }_MESSAGE`
             ),
             files: files.map(file => {
@@ -172,7 +173,7 @@ export class SettingsComponent {
                 name: file,
                 path: `${
                   type === 'image' ? this.imagesPath : this.soundsPath
-                }${file}`
+                  }${file}`
               };
             })
           }
@@ -286,8 +287,8 @@ export class SettingsComponent {
       ? this.translateService.instant('PAGES.SETTINGS.FORM.VALIDATORS.REQUIRED')
       : formControl.hasError('pattern')
         ? this.translateService.instant(
-            'PAGES.SETTINGS.FORM.VALIDATORS.NUMBER_PATTERN'
-          )
+          'PAGES.SETTINGS.FORM.VALIDATORS.NUMBER_PATTERN'
+        )
         : '';
   }
 
@@ -363,7 +364,7 @@ export class SettingsComponent {
       const filename = this.getFileNameWithExtension(paths[i]);
       const writeFilePath = `${
         type === 'image' ? this.imagesPath : this.soundsPath
-      }${filename}`;
+        }${filename}`;
       await this.fileService.writeFile(writeFilePath, data);
     }
   }

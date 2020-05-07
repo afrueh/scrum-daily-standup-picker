@@ -3,14 +3,16 @@ import * as fs from 'fs';
 
 @Injectable()
 export class FileService {
-  constructor() {}
+  constructor() { }
 
   async readFile(path: string): Promise<any> {
     return new Promise((resolve, reject) => {
       fs.readFile(path, (err, data) => {
         if (err) {
+          console.log(err);
           reject(err);
         }
+        console.log(`Reading file at ${path}`)
         resolve(data);
       });
     });
@@ -20,8 +22,10 @@ export class FileService {
     return new Promise((resolve, reject) => {
       fs.writeFile(path, data, err => {
         if (err) {
+          console.log(err)
           reject(err);
         }
+        console.log(`writing file to ${path}`)
         resolve();
       });
     });
@@ -31,6 +35,7 @@ export class FileService {
     return new Promise((resolve, reject) => {
       fs.readdir(directoryPath, (err, files) => {
         if (err) {
+          console.log(err)
           reject(err);
         }
         resolve(files);
